@@ -1,6 +1,6 @@
 # Nordot
 
-画像をNordカラースキーム（青と黒）のドット絵に変換するツール
+Convert images to pixel art using [Nord](https://github.com/nordtheme/nord) color scheme (blue and black palette)
 
 default
 
@@ -14,40 +14,40 @@ dot grid
 
 <img src="./images/megumi_dot_grid.png" alt="Megumi dot grid" width="400">
 
-## インストール
+## Installation
 
 ```bash
 pip install Pillow numpy
 ```
 
-## 使い方
+## Usage
 
 ```bash
-python nordot.py <入力画像> [出力画像] [ピクセルサイズ] [隙間サイズ]
+python nordot.py <input_image> [output_image] [pixel_size] [gap_size]
 ```
 
-### 例
+### Examples
 
 ```bash
-# 基本
-python nord_pixel_art.py photo.jpg
+# Basic conversion
+python nordot.py photo.jpg
 
-# ピクセルサイズ指定
-python nord_pixel_art.py photo.jpg output.png 16
+# Specify pixel size
+python nordot.py photo.jpg output.png 16
 
-# 隙間を空ける（ドット絵風）
-python nord_pixel_art.py photo.jpg output.png 8 2
+# Add gaps between blocks (grid style)
+python nordot.py photo.jpg output.png 8 2
 ```
 
-## パラメータ
+## Parameters
 
-- **入力画像**: 変換する画像ファイル（必須）
-- **出力画像**: 保存先（デフォルト: `nord_pixel_art.png`）
-- **ピクセルサイズ**: ドットの大きさ（デフォルト: `8`）
-- **隙間サイズ**: ピクセル間の隙間（デフォルト: `0`、推奨: `1-3`）
+- **input_image**: Image file to convert (required)
+- **output_image**: Output path (default: `nord_pixel_art.png`)
+- **pixel_size**: Block size for pixelation (default: `8`)
+- **gap_size**: Gap between pixel blocks (default: `0`, recommended: `1-3`)
 
-## カラーパレット
+## Color Palette
 
-Nordカラースキームの青と黒系6色を使用:
-- Nord0-3: Polar Night（黒系4色）
-- Nord9-10: Frost（青系2色）
+Uses 6 colors from Nord color scheme:
+- Nord0-3: Polar Night (4 dark colors)
+- Nord9-10: Frost (2 blue colors)
