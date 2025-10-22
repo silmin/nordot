@@ -3,12 +3,15 @@
 Convert images to pixel art using [Nord](https://github.com/nordtheme/nord) color scheme (blue and black palette)
 
 default
+
 <img src="./images/megumi.jpg" alt="Megumi" width="200">
 
 dot
+
 <img src="./images/megumi_dot.png" alt="Megumi dot" width="200">
 
 dot grid
+
 <img src="./images/megumi_dot_grid.png" alt="Megumi dot grid" width="200">
 
 ## Installation
