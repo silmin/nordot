@@ -33,64 +33,59 @@ def convert_to_pixel_art(image_path, output_path, pixel_size=8, gap=0):
     """画像をNordカラーのドット絵に変換"""
     # 画像を開く
     img = Image.open(image_path).convert('RGB')
-
-    # リサイズ（ドット絵化）
     width, height = img.size
-    new_width = width // pixel_size
-    new_height = height // pixel_size
 
-    # 縮小してからアップスケール
-    img_small = img.resize((new_width, new_height), Image.Resampling.LANCZOS)
+    # ピクセルブロック数を計算
+    blocks_x = width // pixel_size
+    blocks_y = height // pixel_size
 
-    # Nordカラーに変換
-    pixels = np.array(img_small)
-    nord_pixels = np.zeros_like(pixels)
+    # 出力画像サイズを計算
+    output_width = blocks_x * (pixel_size + gap) - gap if gap > 0 else width
+    output_height = blocks_y * (pixel_size + gap) - gap if gap > 0 else height
 
-    for i in range(new_height):
-        for j in range(new_width):
-            nord_pixels[i, j] = closest_nord_color(tuple(pixels[i, j]))
+    # 背景色（最も暗いNord色）で初期化
+    final_img = Image.new('RGB', (output_width, output_height), NORD_COLORS[0])
 
-    # 新しい画像を作成
-    nord_img = Image.fromarray(nord_pixels.astype('uint8'), 'RGB')
+    # 各ピクセルブロックを処理
+    for block_y in range(blocks_y):
+        for block_x in range(blocks_x):
+            # ブロック内のピクセルを平均してNordカラーに変換
+            block_left = block_x * pixel_size
+            block_top = block_y * pixel_size
+            block_right = block_left + pixel_size
+            block_bottom = block_top + pixel_size
 
-    if gap > 0:
-        # 隙間ありバージョン
-        effective_pixel_size = pixel_size - gap
-        final_width = new_width * pixel_size
-        final_height = new_height * pixel_size
+            # ブロック領域を切り出し
+            block = img.crop((block_left, block_top, block_right, block_bottom))
+            block_array = np.array(block)
 
-        # 背景色（最も暗いNord色）で初期化
-        final_img = Image.new('RGB', (final_width, final_height), NORD_COLORS[0])
+            # ブロックの平均色を計算
+            avg_color = tuple(block_array.mean(axis=(0, 1)).astype(int))
+            nord_color = closest_nord_color(avg_color)
 
-        # 各ピクセルを隙間を空けて描画
-        for i in range(new_height):
-            for j in range(new_width):
-                color = tuple(nord_pixels[i, j])
-                x = j * pixel_size
-                y = i * pixel_size
+            # 出力画像にブロックを描画
+            out_x = block_x * (pixel_size + gap)
+            out_y = block_y * (pixel_size + gap)
 
-                # ピクセルを描画（隙間分小さく）
-                for py in range(effective_pixel_size):
-                    for px in range(effective_pixel_size):
-                        final_img.putpixel((x + px, y + py), color)
-    else:
-        # 隙間なしバージョン（従来通り）
-        final_img = nord_img.resize((new_width * pixel_size, new_height * pixel_size),
-                                    Image.Resampling.NEAREST)
+            for dy in range(pixel_size):
+                for dx in range(pixel_size):
+                    final_img.putpixel((out_x + dx, out_y + dy), nord_color)
 
     # 保存
     final_img.save(output_path)
     print(f"変換完了: {output_path}")
     print(f"元のサイズ: {width}x{height}")
-    print(f"ドット絵サイズ: {new_width}x{new_height} ({pixel_size}x{pixel_size}ピクセル)")
+    print(f"出力サイズ: {output_width}x{output_height}")
+    print(f"ピクセルブロックサイズ: {pixel_size}x{pixel_size}")
     if gap > 0:
-        print(f"ピクセル間の隙間: {gap}px")
+        print(f"ブロック間の隙間: {gap}px")
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print("使い方: python nord_pixel_art.py <入力画像> [出力画像] [ピクセルサイズ] [隙間サイズ]")
-        print("例: python nord_pixel_art.py input.jpg output.png 8 2")
-        print("    隙間サイズ: ピクセル間の隙間（0=なし、1-3推奨）")
+        print("使い方: python nordot.py <入力画像> [出力画像] [ピクセルブロックサイズ] [隙間サイズ]")
+        print("例: python nordot.py input.jpg output.png 8 2")
+        print("    ピクセルブロックサイズ: 隙間を空けるブロックサイズ（デフォルト: 8）")
+        print("    隙間サイズ: ピクセルブロック間の隙間（0=なし、1-3推奨）")
         sys.exit(1)
 
     input_path = sys.argv[1]

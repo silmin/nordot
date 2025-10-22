@@ -2,6 +2,18 @@
 
 画像をNordカラースキーム（青と黒）のドット絵に変換するツール
 
+default
+
+<img src="./images/megumi.jpg" alt="Megumi" width="400">
+
+dot
+
+<img src="./images/megumi_dot.png" alt="Megumi dot" width="400">
+
+dot grid
+
+<img src="./images/megumi_dot_grid.png" alt="Megumi dot grid" width="400">
+
 ## インストール
 
 ```bash
